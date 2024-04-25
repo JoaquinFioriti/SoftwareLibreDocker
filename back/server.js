@@ -11,7 +11,7 @@ const port = 3000;
 
 // Configuración de CouchDB
 const couch = new CouchDB({
-    host: 'container_db', //container_db
+    host: 'couchdb', //container_db
     protocol: 'http',
     port: 5984,
     auth: {
