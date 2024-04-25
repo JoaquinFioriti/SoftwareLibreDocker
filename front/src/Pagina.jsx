@@ -32,7 +32,7 @@ function Pagina() {
 
     async function obtenerPersonas(){
         try {
-            const response = await fetch('http://tp_docker_back:3000/personas', {
+            const response = await fetch('http://172.18.0.3:3000/personas', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ function Pagina() {
 
     async function agregarPersona(nombre, apellido) {
         try {
-            const response = await fetch('http://tp_docker_back:3000/personas', {
+            const response = await fetch('http://172.18.0.3:3000/personas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

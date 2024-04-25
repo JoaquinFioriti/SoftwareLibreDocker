@@ -1,30 +1,21 @@
-# Imagen base
-FROM node:latest AS builder
+# Usa una imagen base con Node.js
+FROM node:latest
 
-# Directorio de trabajo dentro del contenedor
+# Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar los archivos de package.json y package-lock.json
-COPY package.json .
-COPY yarn.lock .
+# Copia el package.json y el package-lock.json (o yarn.lock si estás usando Yarn) al directorio de trabajo
+COPY package*.json ./
 
-# Instalar las dependencias
-RUN yarn install
+# Instala las dependencias
+RUN npm install
 
-# Copiar el resto de los archivos
+# Copia el resto de los archivos de tu aplicación al directorio de trabajo
 COPY . .
 
-# Construir la aplicación
-RUN yarn build
+# Compila tu aplicación
+RUN npm run build
 
-# Segunda etapa del Dockerfile
-FROM nginx:alpine
 
-# Copiar los archivos de construcción de la primera etapa
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Exponer el puerto 80
-EXPOSE 80
-
-# Comando para iniciar Nginx en primer plano
-CMD ["nginx", "-g", "daemon off;"]
+# Define el comando para iniciar tu aplicación
+CMD ["npm", "run", "dev"]
