@@ -14,6 +14,7 @@ function Pagina() {
     setApellido('');
   };
 
+
   useEffect(()=>{
     // Renderizado inicial
     obtenerPersonas().
@@ -28,6 +29,23 @@ function Pagina() {
              setPersonas([...personasResponse]);
             }).
         catch( (error)=> {console.log(error)})
+
+  },[])
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+        obtenerPersonas().
+        then((personas)=>{
+              console.log(personas)
+              const personasResponse = personas.map(persona => ({
+                nombre: persona.nombre,
+                apellido: persona.apellido
+              }));
+              setPersonas([...personasResponse]);
+            }).
+        catch( (error)=> {console.log(error)})
+    }, 10000);
+    return () => clearInterval(interval);
   },[])
 
     async function obtenerPersonas(){

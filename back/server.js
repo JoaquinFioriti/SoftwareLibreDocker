@@ -3,15 +3,20 @@ const bodyParser = require('body-parser');
 const CouchDB = require('node-couchdb');
 const cors = require('cors')
 const app = express();
+const {faker} = require('@faker-js/faker');
 const port = 3000;
 
 
+const addPersona = async (nombre, apellido) =>{
+    const persona = {nombre, apellido}
+    const res = await couch.insert('personas', persona);
+    return res
+}
 
 
 
-// Configuración de CouchDB
 const couch = new CouchDB({
-    host: 'couchdb', //container_db
+    host: 'couchdb', 
     protocol: 'http',
     port: 5984,
     auth: {
@@ -20,25 +25,21 @@ const couch = new CouchDB({
     }
 });
 
-// Middleware para parsear el body de las solicitudes
 app.use(bodyParser.json());
 
 
 app.use(cors())
 
-// Endpoint para manejar solicitudes POST de personas
 app.post('/personas', (req, res) => {
     const { nombre, apellido } = req.body;
-    const persona = { nombre, apellido };
-
-    couch.insert('personas', persona).then(({ data, headers, status }) => {
+    
+    addPersona(nombre, apellido).then(({ data, headers, status }) => {
         res.status(status).json(data);
     }).catch(err => {
         res.status(500).send(`Error: ${err}`);
     });
 });
 
-// Endpoint para obtener todas las personas
 app.get('/personas', (req, res) => {
 
     couch.get('personas', '_all_docs', { include_docs: true })
@@ -50,6 +51,21 @@ app.get('/personas', (req, res) => {
             res.status(500).send(`Error: ${err}`);
         });
 });
+
+
+
+
+
+function generarNombreAleatorio() {
+  const nombre = faker.name.firstName();
+  const apellido = faker.name.lastName()
+  addPersona(nombre, apellido)
+  console.log(`Nombre generado: ${nombre} ${apellido}`);
+}
+
+generarNombreAleatorio();
+setInterval(generarNombreAleatorio, 10000);//30segs
+
 
 // Iniciar el servidor
 app.listen(port, () => {
